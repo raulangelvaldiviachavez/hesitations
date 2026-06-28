@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>perdóname?</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Quicksand:wght@400;500;600;700&display=swap');
+
+  :root{
+    --bg-1:#c9aef0;
+    --bg-2:#5b3a8c;
+    --card:#fbf8ff;
+    --ink:#3a1f5d;
+    --ink-soft:#7b5fa3;
+    --yes:#9b4fdb;
+    --yes-dark:#7e2fc4;
+    --no:#e3d6f7;
+    --no-ink:#6b4f96;
+  }
+
+  *{box-sizing:border-box;}
+
+  html,body{
+    margin:0;
+    height:100%;
+    overflow:hidden;
+    font-family:'Quicksand',sans-serif;
+    background:linear-gradient(160deg,var(--bg-1) 0%, var(--bg-2) 100%);
+  }
+
+  .floaters{
+    position:fixed;
+    inset:0;
+    z-index:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+
+  .floaters span{
+    position:absolute;
+    bottom:-10%;
+    font-size:28px;
+    opacity:0.35;
+    animation:drift linear infinite;
+    filter:saturate(1.1);
+  }
+
+  @keyframes drift{
+    0%{ transform:translateY(0) rotate(0deg); opacity:0; }
+    10%{ opacity:0.4; }
+    90%{ opacity:0.4; }
+    100%{ transform:translateY(-115vh) rotate(360deg); opacity:0; }
+  }
+
+  .stage{
+    position:relative;
+    z-index:1;
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:24px;
+  }
+
+  .card{
+    background:var(--card);
+    border-radius:28px;
+    box-shadow:0 20px 60px rgba(58,31,93,0.25);
+    padding:48px 40px 40px;
+    max-width:420px;
+    width:100%;
+    text-align:center;
+    position:relative;
+  }
+
+  .eyebrow{
+    font-size:13px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-soft);
+    font-weight:600;
+    margin-bottom:10px;
+  }
+
+  h1{
+    font-family:'Baloo 2', sans-serif;
+    font-weight:800;
+    color:var(--ink);
+    font-size:30px;
+    line-height:1.25;
+    margin:0 0 8px;
+    transition:transform .25s ease;
+    min-height:76px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+
+  .sub{
+    color:var(--ink-soft);
+    font-size:14.5px;
+    margin:0 0 30px;
+    min-height:20px;
+    font-weight:500;
+  }
+
+  .buttons{
+    position:relative;
+    display:flex;
+    gap:16px;
+    justify-content:center;
+    align-items:center;
+    min-height:64px;
+  }
+
+  button{
+    border:none;
+    cursor:pointer;
+    font-family:'Baloo 2', sans-serif;
+    font-weight:700;
+    border-radius:999px;
+    transition:transform .18s cubic-bezier(.34,1.56,.64,1), background .2s ease, left .35s ease, top .35s ease;
+  }
+
+  #yes{
+    background:var(--yes);
+    color:#fff;
+    font-size:18px;
+    padding:14px 30px;
+    box-shadow:0 10px 24px rgba(155,79,219,0.4);
+  }
+  #yes:hover{ background:var(--yes-dark); transform:scale(1.06); }
+  #yes:active{ transform:scale(0.96); }
+
+  #no{
+    background:var(--no);
+    color:var(--no-ink);
+    font-size:16px;
+    padding:13px 26px;
+  }
+  #no:hover{ transform:scale(0.97); }
+
+  #no.roaming{
+    position:fixed;
+    z-index:5;
+  }
+
+  .gone-msg{
+    font-size:13px;
+    color:var(--ink-soft);
+    margin-top:18px;
+    font-weight:600;
+    opacity:0;
+    transition:opacity .4s ease;
+  }
+  .gone-msg.show{ opacity:1; }
+
+  /* celebration */
+  .celebrate{
+    display:none;
+    flex-direction:column;
+    align-items:center;
+  }
+  .celebrate.show{ display:flex; }
+  .normal-content.hide{ display:none; }
+
+  .big-heart{
+    font-size:54px;
+    margin-bottom:6px;
+    animation:pop .5s cubic-bezier(.34,1.56,.64,1);
+  }
+  @keyframes pop{
+    0%{ transform:scale(0); }
+    70%{ transform:scale(1.2); }
+    100%{ transform:scale(1); }
+  }
+
+  .celebrate h1{ min-height:auto; }
+
+  .confetti{
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    z-index:6;
+    overflow:hidden;
+  }
+  .confetti span{
+    position:absolute;
+    top:-5%;
+    width:9px;
+    height:14px;
+    opacity:0.95;
+    animation:fall linear forwards;
+    border-radius:2px;
+  }
+  @keyframes fall{
+    to{
+      transform:translateY(110vh) rotate(540deg);
+      opacity:0.9;
+    }
+  }
+
+  .restart{
+    margin-top:22px;
+    background:transparent;
+    color:var(--ink-soft);
+    font-family:'Quicksand',sans-serif;
+    font-weight:600;
+    font-size:13px;
+    text-decoration:underline;
+    padding:6px;
+  }
+  .restart:hover{ color:var(--ink); transform:none; }
+
+  @media (prefers-reduced-motion: reduce){
+    .floaters span, #no, button, .big-heart{ animation:none !important; transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="floaters" id="floaters"></div>
+
+<div class="stage">
+  <div class="card">
+
+    <div class="normal-content" id="normalContent">
+      <div class="eyebrow">a quien corresponda</div>
+      <h1 id="question">¿Me perdonas? 🥺</h1>
+      <p class="sub" id="sub">tómate tu tiempo, no hay presión</p>
+
+      <div class="buttons" id="buttonsRow">
+        <button id="yes">Sí 💖</button>
+        <button id="no">No</button>
+      </div>
+
+      <div class="gone-msg" id="goneMsg">el botón de "no" renunció</div>
+    </div>
+
+    <div class="celebrate" id="celebrate">
+      <div class="big-heart">🎉</div>
+      <h1>¡Sabía que me perdonarías!</h1>
+      <p class="sub">gracias por darme otra oportunidad 💕</p>
+      <button class="restart" id="restart">empezar de nuevo</button>
+    </div>
+
+  </div>
+</div>
+
+<div class="confetti" id="confetti"></div>
+
+<script>
+  // fondo flotante con corazones
+  const floaters = document.getElementById('floaters');
+  const emojis = ['💖','💗','💕','✨','💐'];
+  for(let i=0;i<14;i++){
+    const s = document.createElement('span');
+    s.textContent = emojis[Math.floor(Math.random()*emojis.length)];
+    s.style.left = Math.random()*100+'%';
+    s.style.fontSize = (16+Math.random()*26)+'px';
+    s.style.animationDuration = (10+Math.random()*12)+'s';
+    s.style.animationDelay = (Math.random()*10)+'s';
+    floaters.appendChild(s);
+  }
+
+  const question = document.getElementById('question');
+  const sub = document.getElementById('sub');
+  const yesBtn = document.getElementById('yes');
+  const noBtn = document.getElementById('no');
+  const buttonsRow = document.getElementById('buttonsRow');
+  const goneMsg = document.getElementById('goneMsg');
+  const normalContent = document.getElementById('normalContent');
+  const celebrate = document.getElementById('celebrate');
+
+  const pleas = [
+    { q: '¿Me perdonas? 🥺', s: 'tómate tu tiempo, no hay presión' },
+    { q: '¿Segura?', s: 'piénsalo de nuevo...' },
+    { q: '¿De verdad de verdad?', s: 'esta es importante' },
+    { q: '¿En serio en serio?', s: 'ya casi, ya casi' },
+    { q: 'mmm... ¿seguro seguro?', s: 'el botón de "no" está nervioso' },
+    { q: 'última oportunidad 👀', s: 'después de esta ya no hay vuelta atrás' },
+    { q: 'okay ya, dale al Sí nomás 😏', s: 'sabes que quieres' }
+  ];
+
+  let step = 0;
+  let scale = 1;
+
+  function growYes(){
+    scale = Math.min(scale + 0.10, 1.9);
+    yesBtn.style.transform = `scale(${scale})`;
+  }
+
+  function shrinkNo(){
+    const s = Math.max(1 - step*0.13, 0.25);
+    noBtn.style.transform = `scale(${s})`;
+  }
+
+  function updateText(){
+    const i = Math.min(step, pleas.length - 1);
+    question.style.transform = 'scale(0.9)';
+    setTimeout(()=>{ question.style.transform = 'scale(1)'; }, 120);
+    question.textContent = pleas[i].q;
+    sub.textContent = pleas[i].s;
+  }
+
+  function dodge(){
+    const rect = buttonsRow.getBoundingClientRect();
+    const margin = 60;
+    const maxX = window.innerWidth - margin;
+    const maxY = window.innerHeight - margin;
+    const x = margin + Math.random()*(maxX-margin);
+    const y = margin + Math.random()*(maxY-margin);
+
+    if(!noBtn.classList.contains('roaming')){
+      noBtn.classList.add('roaming');
+    }
+    noBtn.style.left = x + 'px';
+    noBtn.style.top = y + 'px';
+  }
+
+  noBtn.addEventListener('mouseenter', () => {
+    if(step >= pleas.length - 1) return; // ya en la última etapa, deja que lo atrapen si puede
+    dodge();
+  });
+
+  // en celular no hay hover, asi que lo hacemos esquivar apenas lo tocan
+  noBtn.addEventListener('touchstart', () => {
+    if(step >= pleas.length - 1) return;
+    dodge();
+  }, { passive:true });
+
+  noBtn.addEventListener('click', () => {
+    step++;
+    growYes();
+    updateText();
+
+    if(step >= pleas.length - 1){
+      shrinkNo();
+    }
+
+    if(step > pleas.length - 1){
+      noBtn.style.display = 'none';
+      goneMsg.classList.add('show');
+    } else {
+      dodge();
+    }
+  });
+
+  function burstConfetti(){
+    const colors = ['#ff5c7a','#ffd166','#a29bfe','#74e0a4','#ff8fab'];
+    const layer = document.getElementById('confetti');
+    for(let i=0;i<70;i++){
+      const c = document.createElement('span');
+      c.style.left = Math.random()*100+'%';
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      c.style.animationDuration = (2.2+Math.random()*1.8)+'s';
+      c.style.animationDelay = (Math.random()*0.6)+'s';
+      layer.appendChild(c);
+      setTimeout(()=>c.remove(), 5000);
+    }
+  }
+
+  yesBtn.addEventListener('click', () => {
+    normalContent.classList.add('hide');
+    celebrate.classList.add('show');
+    burstConfetti();
+  });
+
+  document.getElementById('restart').addEventListener('click', () => {
+    step = 0;
+    scale = 1;
+    yesBtn.style.transform = 'scale(1)';
+    noBtn.style.transform = 'scale(1)';
+    noBtn.style.display = 'inline-block';
+    noBtn.classList.remove('roaming');
+    goneMsg.classList.remove('show');
+    question.textContent = pleas[0].q;
+    sub.textContent = pleas[0].s;
+    celebrate.classList.remove('show');
+    normalContent.classList.remove('hide');
+  });
+</script>
+
+</body>
+</html>
